@@ -52,7 +52,7 @@ extern int system_call(void);
 
 union task_union {
 	struct task_struct task;
-	char stack[PAGE_SIZE];
+	char stack[PAGE_SIZE]; // 4 KB
 };
 
 static union task_union init_task = {INIT_TASK,};
@@ -100,6 +100,8 @@ void math_state_restore()
  *   NOTE!!  Task 0 is the 'idle' task, which gets called when no other
  * tasks can run. It can not be killed, and it cannot sleep. The 'state'
  * information in task[0] is never used.
+
+    'schedule()' 是调度函数。
  */
 void schedule(void)
 {
@@ -138,7 +140,7 @@ void schedule(void)
 				(*p)->counter = ((*p)->counter >> 1) +
 						(*p)->priority;
 	}
-	switch_to(next);
+	switch_to(next); // 切换到任务号为 next 的任务, 并运行
 }
 
 int sys_pause(void)

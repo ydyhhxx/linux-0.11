@@ -49,7 +49,7 @@ __asm__ ("movw %%dx,%%ax\n\t" \
 	*((gate_addr)+1) = (((base) & 0x0000ffff)<<16) | \
 		((limit) & 0x0ffff); }
 
-#define _set_tssldt_desc(n,addr,type) \
+#define _set_tssldt_desc(n,addr,type) \ // set 操作, 从内联汇编代码得出: 无输出, 多输入
 __asm__ ("movw $104,%1\n\t" \
 	"movw %%ax,%2\n\t" \
 	"rorl $16,%%eax\n\t" \
@@ -58,8 +58,14 @@ __asm__ ("movw $104,%1\n\t" \
 	"movb $0x00,%5\n\t" \
 	"movb %%ah,%6\n\t" \
 	"rorl $16,%%eax" \
-	::"a" (addr), "m" (*(n)), "m" (*(n+2)), "m" (*(n+4)), \
-	 "m" (*(n+5)), "m" (*(n+6)), "m" (*(n+7)) \
+	: // 无输出
+	:"a" (addr), // eax 设置的地址 共 32 位
+	 "m" (*(n)),
+	 "m" (*(n+2)),
+	 "m" (*(n+4)),
+	 "m" (*(n+5)),
+	 "m" (*(n+6)),
+	 "m" (*(n+7))
 	)
 
 #define set_tss_desc(n,addr) _set_tssldt_desc(((char *) (n)),addr,"0x89")
